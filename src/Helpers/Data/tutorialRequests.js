@@ -7,6 +7,7 @@ const getRequest = () => new Promise((resolve, reject) => {
   axios
     .get(`${firebaseUrl}/tutorials.json`)
     .then((res) => {
+      console.log('get Request data:', res);
       const tutorials = [];
       if (res.data !== null) {
         Object.keys(res.data).forEach((key) => {
