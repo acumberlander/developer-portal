@@ -5,6 +5,7 @@ import SingleTutorial from '../../SingleTutorial/singleTutorial';
 import './tutorials.scss';
 
 class Tutorials extends React.Component {
+  // this defines what type these property values should be
   static propTypes = {
     tutorials: PropTypes.arrayOf(listingShape),
     deleteSingleListing: PropTypes.func,
@@ -20,7 +21,7 @@ class Tutorials extends React.Component {
         />
     ));
     return (
-      <div className="tutorials col">
+      <div className="display-items col">
         <h2>Tutorials</h2>
         <ul>{tutorialItemComponents}</ul>
       </div>
