@@ -20,6 +20,7 @@ import authRequests from '../Helpers/Data/authRequests';
 class App extends Component {
   state = {
     authed: false,
+    github_username: '',
   }
 
   componentDidMount() {
@@ -47,8 +48,8 @@ class App extends Component {
     this.removeListener();
   }
 
-  isAuthenticated = () => {
-    this.setState({ authed: true });
+  isAuthenticated = (username) => {
+    this.setState({ authed: true, github_username: username });
   }
 
   deleteOne = (tutorialId) => {
