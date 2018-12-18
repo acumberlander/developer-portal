@@ -4,11 +4,12 @@ import {
   Form,
   FormGroup,
   Label,
-  Input 
+  Input,
 } from 'reactstrap';
 
 import listingShape from '../Helpers/Data/propz/listingShape';
 import authRequests from '../Helpers/Data/authRequests';
+import './singleTutorial.scss';
 
 class SingleTutorial extends React.Component {
   static propTypes = {
@@ -35,23 +36,28 @@ class SingleTutorial extends React.Component {
                 <i className="fas fa-trash-alt"></i>
               </button>
             </span>
-            <Form>
-              <FormGroup check inline>
-                <Label check>
-                  <Input type="checkbox" id="tutorialStatus"/>
-                </Label>
-              </FormGroup>
-            </Form>
           </div>
         );
       }
       return <span className="col-2"></span>;
     };
     return (
-      <li className="listing-item text-center">
-        <span className="col-7">{tutorial.title}</span>
-        <span className="col-7">{tutorial.link}</span>
+      <li className="single-tutorial text-center">
+        <span className="col-4">{tutorial.title}</span>
+        <span className="col-3">{tutorial.link}</span>
         {makeButtons()}
+        <span className="col-1">
+          <Form>
+            <FormGroup check inline>
+              <Label check>
+                <Input type="checkbox" id="tutorialStatus"/>
+              </Label>
+            </FormGroup>
+          </Form>
+        </span>
+        <span>
+        "Done!"
+        </span>
       </li>
     );
   }

@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+
 import connection from '../Helpers/Data/connection';
+
+import Auth from '../components/Auth/auth';
+import Tutorials from '../InfoDisplay/Tutorials/tutorials';
+import Form from '../Form/form';
+import MyNavbar from '../MyNavbar/myNavbar';
+
+import tutorialRequests from '../Helpers/Data/tutorialRequests';
+
 import './app.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Auth from '../components/Auth/auth';
-import MyNavbar from '../MyNavbar/myNavbar';
 import Bio from '../Bio/bio';
-import Form from '../Form/form';
-import InfoDisplay from '../InfoDisplay/infoDisplay';
 import authRequests from '../Helpers/Data/authRequests';
 
 
@@ -19,6 +24,12 @@ class App extends Component {
 
   componentDidMount() {
     connection();
+    tutorialRequests.getRequest()
+      .then((tutorials) => {
+        this.setState({ tutorials });
+      })
+      .catch(err => console.error('error with listing GET', err));
+
     this.removeListener = firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setState({
@@ -40,6 +51,17 @@ class App extends Component {
     this.setState({ authed: true });
   }
 
+  deleteOne = (tutorialId) => {
+    tutorialRequests.deleteTutorial(tutorialId)
+      .then(() => {
+        tutorialRequests.getRequest()
+          .then((tutorials) => {
+            this.setState({ tutorials });
+          });
+      })
+      .catch(err => console.error('error with delete single', err));
+  }
+
   render() {
     const logoutClickEvent = () => {
       authRequests.logoutUser();
@@ -50,16 +72,25 @@ class App extends Component {
       return (
       <div className="App">
         <MyNavbar isAuthed={this.state.authed} logoutClickEvent={logoutClickEvent}/>
+        <div className="row">
         <Auth isAuthenticated={this.isAuthenticated}/>
+        </div>
       </div>
       );
     }
     return (
       <div className="App">
         <MyNavbar isAuthed={this.state.authed} logoutClickEvent={logoutClickEvent}/>
+        <div className="row">
+          <Tutorials
+            tutorials={this.state.tutorials}
+            deleteSingleListing={this.deleteOne}
+          />
         <Bio />
-        <Form />
-        <InfoDisplay />
+        </div>
+        <div className="row">
+          <Form />
+        </div>
       </div>
     );
   }
