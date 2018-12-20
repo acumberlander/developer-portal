@@ -15,6 +15,7 @@ class SingleTutorial extends React.Component {
   static propTypes = {
     tutorial: listingShape,
     deleteSingleListing: PropTypes.func,
+    passTutorialToEdit: PropTypes.func,
   }
 
   deleteEvent = (e) => {
@@ -23,14 +24,26 @@ class SingleTutorial extends React.Component {
     deleteSingleListing(tutorial.id);
   }
 
+  editEvent = (e) => {
+    e.preventDefault();
+    const { passTutorialToEdit, tutorial } = this.props;
+    passTutorialToEdit(tutorial.id);
+  }
+
   render() {
     const { tutorial } = this.props;
     const uid = authRequests.getCurrentUid();
 
     const makeButtons = () => {
       if (tutorial.uid === uid) {
+        console.log(tutorial.uid);
         return (
           <div>
+            <span className="col">
+              <button className="btn btn-default" onClick={this.editEvent}>
+                <i className="fas fa-pencil-alt"></i>
+              </button>
+            </span>
             <span className="col">
               <button className="btn btn-default" onClick={this.deleteEvent}>
                 <i className="fas fa-trash-alt"></i>
