@@ -13,7 +13,7 @@ import connection from '../Helpers/Data/connection';
 
 import Auth from '../components/Auth/auth';
 import Tutorials from '../InfoDisplay/Tutorials/tutorials';
-import Form from '../Form/form';
+import TutorialForm from '../Form/tutorialForm';
 import MyNavbar from '../MyNavbar/myNavbar';
 
 import tutorialRequests from '../Helpers/Data/tutorialRequests';
@@ -32,6 +32,8 @@ class App extends Component {
     blogs: {},
     resources: {},
     podcasts: {},
+    editId: '-1',
+    isEditing: false,
   }
 
   componentDidMount() {
@@ -74,24 +76,48 @@ class App extends Component {
       .catch(err => console.error('error with delete single', err));
   }
 
-  switchDisplayInfo = (e) => {
-    console.log(e);
-    // tutorialRequests.
-  }
+  formSubmitEvent = (newTutorial) => {
+    const { isEditing, editId } = this.state;
+    if (isEditing) {
+      tutorialRequests.putRequest(editId, newTutorial)
+        .then(() => {
+          tutorialRequests.getRequest()
+            .then((tutorials) => {
+              this.setState({ tutorials, isEditing: false, editId: '-1' });
+            });
+        })
+        .catch(err => console.error('error with tutorials post', err));
+    } else {
+      tutorialRequests.postRequest(newTutorial)
+        .then(() => {
+          tutorialRequests.getRequest()
+            .then((tutorials) => {
+              this.setState({ tutorials });
+            });
+        })
+        .catch(err => console.error('error with tutorials post', err));
+    }
+  };
 
+  passTutorialToEdit = tutorialId => this.setState({ isEditing: true, editId: tutorialId });
 
   render() {
+    const {
+      authed,
+      tutorials,
+      isEditing,
+      editId,
+    } = this.state;
+
     const logoutClickEvent = () => {
       authRequests.logoutUser();
       this.setState({ authed: false });
     };
 
-    this.switchDisplayInfo();
-
-    if (!this.state.authed) {
+    if (!authed) {
       return (
       <div className="App">
-        <MyNavbar isAuthed={this.state.authed} logoutClickEvent={logoutClickEvent}/>
+        <MyNavbar isAuthed={authed} logoutClickEvent={logoutClickEvent}/>
         <div className="row">
         <Auth isAuthenticated={this.isAuthenticated}/>
         </div>
@@ -100,7 +126,7 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <MyNavbar isAuthed={this.state.authed} logoutClickEvent={logoutClickEvent}/>
+        <MyNavbar isAuthed={authed} logoutClickEvent={logoutClickEvent}/>
         <div className="tabs m-3">
           <span>
             <button className="btn btn-secondary m-1" id="tutorialTab">
@@ -125,13 +151,18 @@ class App extends Component {
         </div>
         <div className="row">
           <Tutorials
-            tutorials={this.state.tutorials}
+            tutorials={tutorials}
             deleteSingleListing={this.deleteOne}
+            passTutorialToEdit={this.passTutorialToEdit}
           />
         <Bio />
         </div>
-        <div className="row">
-          <Form />
+        <div className="col">
+          <TutorialForm
+          onSubmit={this.formSubmitEvent}
+          isEditing={isEditing}
+          editId={editId}
+          />
         </div>
       </div>
     );
