@@ -51,8 +51,10 @@ class TutorialForm extends React.Component {
   componentDidUpdate(prevProps) {
     const { isEditing, editId } = this.props;
     if (prevProps !== this.props && isEditing) {
+      // this promise is returning null instead of an object. This why edit feature is broken
       tutorialRequests.getSingleTutorial(editId)
         .then((tutorial) => {
+          console.log('Right here!', tutorial);
           this.setState({ newTutorial: tutorial.data });
         })
         .catch(err => console.error('error when getSingleTutorial', err));
@@ -90,7 +92,7 @@ class TutorialForm extends React.Component {
                 <label htmlFor="link">Link</label>
               </div>
             </div>
-            <div className="">
+            <div className="form-group">
               <input
                 type="text"
                 className="form-control"
