@@ -16,6 +16,7 @@ const getRequest = () => new Promise((resolve, reject) => {
         });
       }
       resolve(tutorials);
+      console.log(tutorials);
     })
     .catch(err => reject(err));
 });
@@ -24,9 +25,9 @@ const deleteTutorial = tutorialId => axios.delete(`${firebaseUrl}/tutorials/${tu
 
 const postRequest = tutorial => axios.post(`${firebaseUrl}/tutorials.json`, tutorial);
 
-const getSingleTutorial = tutorialId => axios.get(`${firebaseUrl}/tutorial/${tutorialId}.json`);
+const getSingleTutorial = tutorialId => axios.get(`${firebaseUrl}/tutorials/${tutorialId}.json`);
 
-const putRequest = (tutorialId, tutorial) => axios.put(`${firebaseUrl}/tutorial/${tutorialId}.json`, tutorial);
+const putRequest = (tutorialId, tutorial) => axios.put(`${firebaseUrl}/tutorials/${tutorialId}.json`, tutorial);
 
 export default {
   getRequest,
