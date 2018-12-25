@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import listingShape from '../../Helpers/Data/propz/listingShape';
+import listingShape from '../../../Helpers/Data/propz/listingShape';
 import SingleBlog from '../../SingleBlog/singleBlog';
 import './blogs.scss';
 

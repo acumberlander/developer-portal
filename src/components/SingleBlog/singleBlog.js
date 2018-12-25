@@ -7,8 +7,8 @@ import {
   Input,
 } from 'reactstrap';
 
-import listingShape from '../Helpers/Data/propz/listingShape';
-import authRequests from '../Helpers/Data/authRequests';
+import listingShape from '../../Helpers/Data/propz/listingShape';
+import authRequests from '../../Helpers/Data/authRequests';
 import './singleBlog.scss';
 
 class SingleBlog extends React.Component {

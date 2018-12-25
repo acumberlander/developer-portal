@@ -12,15 +12,15 @@ import 'firebase/auth';
 import connection from '../Helpers/Data/connection';
 
 import Auth from '../components/Auth/auth';
-import Tutorials from '../InfoDisplay/Tutorials/tutorials';
-import TutorialForm from '../Form/tutorialForm';
-import MyNavbar from '../MyNavbar/myNavbar';
+import Tutorials from '../components/InfoDisplay/Tutorials/tutorials';
+import TutorialForm from '../components/Form/tutorialForm';
+import MyNavbar from '../components/MyNavbar/myNavbar';
 
 import tutorialRequests from '../Helpers/Data/tutorialRequests';
 
 import './app.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Bio from '../Bio/bio';
+import Bio from '../components/Bio/bio';
 import authRequests from '../Helpers/Data/authRequests';
 
 
@@ -124,6 +124,10 @@ class App extends Component {
       </div>
       );
     }
+
+    const gitHubUsername = authRequests.getGitHubInfo();
+
+
     return (
       <div className="App">
         <MyNavbar isAuthed={authed} logoutClickEvent={logoutClickEvent}/>
@@ -155,7 +159,9 @@ class App extends Component {
             deleteSingleListing={this.deleteOne}
             passTutorialToEdit={this.passTutorialToEdit}
           />
-        <Bio />
+        <Bio
+          gitHubUsername={gitHubUsername}
+        />
         </div>
         <div className="col">
           <TutorialForm

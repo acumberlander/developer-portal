@@ -1,8 +1,8 @@
 import React from 'react';
 import './tutorialForm.scss';
 import PropTypes from 'prop-types';
-import tutorialRequests from '../Helpers/Data/tutorialRequests';
-import authRequests from '../Helpers/Data/authRequests';
+import tutorialRequests from '../../Helpers/Data/tutorialRequests';
+import authRequests from '../../Helpers/Data/authRequests';
 
 
 const defaultTutorial = {
