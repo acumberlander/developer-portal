@@ -9,33 +9,35 @@ import {
 
 import listingShape from '../../Helpers/Data/propz/listingShape';
 import authRequests from '../../Helpers/Data/authRequests';
-import './singleBlog.scss';
+import './singlePodcast.scss';
 
-class SingleBlog extends React.Component {
+class SinglePodcast extends React.Component {
   static propTypes = {
-    blog: listingShape,
+    podcast: listingShape,
     deleteSingleListing: PropTypes.func,
-    passBlogToEdit: PropTypes.func,
+    passPodcastToEdit: PropTypes.func,
   }
 
   deleteEvent = (e) => {
     e.preventDefault();
-    const { deleteSingleListing, blog } = this.props;
-    deleteSingleListing(blog.id);
+    const { deleteSingleListing, podcast } = this.props;
+    deleteSingleListing(podcast.id);
   }
 
   editEvent = (e) => {
     e.preventDefault();
-    const { passBlogToEdit, blog } = this.props;
-    passBlogToEdit(blog.id);
+    const { passPodcastToEdit, podcast } = this.props;
+    passPodcastToEdit(podcast.id);
   }
 
   render() {
-    const { blog } = this.props;
+    const { podcast } = this.props;
     const uid = authRequests.getCurrentUid();
 
     const makeButtons = () => {
-      if (blog.uid === uid) {
+      if (podcast.uid === uid) {
+        console.log(podcast.uid);
+        console.log(uid);
         return (
           <div>
             <span className="col">
@@ -54,15 +56,15 @@ class SingleBlog extends React.Component {
       return <span className="col-2"></span>;
     };
     return (
-      <li className="single-blog text-center">
-        <span className="col-4">{blog.title}</span>
-        <span className="col-3">{blog.link}</span>
+      <li className="single-podcast text-center">
+        <span className="col-4">{podcast.title}</span>
+        <span className="col-3">{podcast.link}</span>
         {makeButtons()}
         <span className="col-1">
           <Form>
             <FormGroup check inline>
               <Label check>
-                <Input type="checkbox" id="blogStatus"/>
+                <Input type="checkbox" id="podcastStatus"/>
               </Label>
             </FormGroup>
           </Form>
@@ -75,4 +77,4 @@ class SingleBlog extends React.Component {
   }
 }
 
-export default SingleBlog;
+export default SinglePodcast;
