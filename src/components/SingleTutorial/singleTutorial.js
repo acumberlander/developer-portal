@@ -36,8 +36,6 @@ class SingleTutorial extends React.Component {
 
     const makeButtons = () => {
       if (tutorial.uid === uid) {
-        console.log(tutorial.uid);
-        console.log(uid);
         return (
           <div>
             <span className="col">
