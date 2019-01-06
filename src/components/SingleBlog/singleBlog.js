@@ -35,7 +35,7 @@ class SingleBlog extends React.Component {
     const uid = authRequests.getCurrentUid();
 
     const makeButtons = () => {
-      if (blog.uid === uid) {
+      if (blog === uid) {
         return (
           <div>
             <span className="col">
