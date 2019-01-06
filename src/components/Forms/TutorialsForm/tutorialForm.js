@@ -1,8 +1,8 @@
 import React from 'react';
 import './tutorialForm.scss';
 import PropTypes from 'prop-types';
-import tutorialRequests from '../Helpers/Data/tutorialRequests';
-import authRequests from '../Helpers/Data/authRequests';
+import tutorialRequests from '../../../Helpers/Data/TutorialsRequests/tutorialRequests';
+// import authRequests from '../../../Helpers/Data/authRequests';
 
 
 const defaultTutorial = {
@@ -43,7 +43,7 @@ class TutorialForm extends React.Component {
     e.preventDefault();
     const { onSubmit } = this.props;
     const myTutorial = { ...this.state.newTutorial };
-    myTutorial.uid = authRequests.getCurrentUid();
+    // myTutorial.uid = authRequests.getCurrentUid();
     onSubmit(myTutorial);
     this.setState({ newTutorial: defaultTutorial });
   }

@@ -7,20 +7,27 @@ import {
   Input,
 } from 'reactstrap';
 
-import listingShape from '../Helpers/Data/propz/listingShape';
-import authRequests from '../Helpers/Data/authRequests';
+import listingShape from '../../Helpers/Data/propz/listingShape';
+import authRequests from '../../Helpers/Data/authRequests';
 import './singleBlog.scss';
 
 class SingleBlog extends React.Component {
   static propTypes = {
     blog: listingShape,
     deleteSingleListing: PropTypes.func,
+    passBlogToEdit: PropTypes.func,
   }
 
   deleteEvent = (e) => {
     e.preventDefault();
     const { deleteSingleListing, blog } = this.props;
     deleteSingleListing(blog.id);
+  }
+
+  editEvent = (e) => {
+    e.preventDefault();
+    const { passBlogToEdit, blog } = this.props;
+    passBlogToEdit(blog.id);
   }
 
   render() {
@@ -31,6 +38,11 @@ class SingleBlog extends React.Component {
       if (blog.uid === uid) {
         return (
           <div>
+            <span className="col">
+              <button className="btn btn-default" onClick={this.editEvent}>
+                <i className="fas fa-pencil-alt"></i>
+              </button>
+            </span>
             <span className="col">
               <button className="btn btn-default" onClick={this.deleteEvent}>
                 <i className="fas fa-trash-alt"></i>
