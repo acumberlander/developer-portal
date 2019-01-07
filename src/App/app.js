@@ -37,7 +37,7 @@ class App extends Component {
     authed: false,
     github_username: '',
     githubToken: '',
-    commitcount: 0,
+    commitCount: 0,
     tutorials: [],
     blogs: [],
     resources: [],
@@ -67,8 +67,8 @@ class App extends Component {
         this.setState({ profile });
       });
     githubData.getUserEvent(users, gitHubTokenStorage)
-      .then((commitcount) => {
-        this.setState({ commitcount });
+      .then((commitCount) => {
+        this.setState({ commitCount });
       })
       .catch(err => console.error('error with github user events GET', err));
   }
@@ -117,13 +117,13 @@ class App extends Component {
     this.removeListener();
   }
 
-  isAuthenticated = (username, accessToken) => {
+  isAuthenticated = (user, accessToken) => {
     this.setState({
       authed: true,
-      github_username: username,
+      github_username: user,
       githubToken: accessToken,
     });
-    sessionStorage.setItem('github_username', username);
+    sessionStorage.setItem('github_username', user);
     sessionStorage.setItem('githubtoken', accessToken);
   }
 
@@ -176,7 +176,7 @@ class App extends Component {
   // ----------------------------------- FORM SUBMIT FUNCTIONS -------------------------------//
 
 
-  tutorialFormSubmitEvent = (newListing, tab) => {
+  formSubmitEvent = (newListing, tab) => {
     if (tab === 'tutorials') {
       tutorialRequests.postTutorialRequest(newListing)
         .then(() => {
@@ -284,9 +284,13 @@ class App extends Component {
     <div className="App">
       <MyNavbar isAuthed={authed} logoutClickEvent={logoutClickEvent}/>
       <div className="wrapper">
-      <div className="profile">
-      { authed && <Profile profile={this.state.profile} commitcount={this.state.commitcount} /> }
-      </div>
+        <div className="profile">
+        { authed
+        && <Profile
+        profile={this.state.profile}
+        commitCount={this.state.commitCount}
+        /> }
+        </div>
       <div className="form">
         <Form
         onSubmit={this.formSubmitEvent}
