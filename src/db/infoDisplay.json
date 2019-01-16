@@ -2,133 +2,153 @@
   "tutorials":
     {
     "tutorial0": {
-    "title": "Tutorial #1",
-    "link": "Tutorial1.com",
+    "name": "Tutorial #1",
+    "url": "Tutorial1.com",
     "type": "tutorial",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "tutorial1": {
-    "title": "Tutorial #2",
-    "link": "Tutorial2.com",
+    "name": "Tutorial #2",
+    "url": "Tutorial2.com",
     "type": "tutorial",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "tutorial2": {
-    "title": "Tutorial #3",
-    "link": "Tutorial3.com",
+    "name": "Tutorial #3",
+    "url": "Tutorial3.com",
     "type": "tutorial",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "tutorial3": {
-    "title": "Tutorial #4",
-    "link": "Tutorial4.com",
+    "name": "Tutorial #4",
+    "url": "Tutorial4.com",
     "type": "tutorial",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "tutorial4": {
-    "title": "Tutorial #5",
-    "link": "Tutorial5.com",
+    "name": "Tutorial #5",
+    "url": "Tutorial5.com",
     "type": "tutorial",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     }
   },
   "blogs":
     {
     "blog0": {
-    "title": "Blog #1",
-    "link": "blog1.com",
+    "name": "Blog #1",
+    "url": "blog1.com",
     "type": "blog",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "blog1": {
-    "title": "blog #2",
-    "link": "blog2.com",
+    "name": "blog #2",
+    "url": "blog2.com",
     "type": "blog",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "blog2": {
-    "title": "blog #3",
-    "link": "blog3.com",
+    "name": "blog #3",
+    "url": "blog3.com",
     "type": "blog",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "blog3": {
-    "title": "blog #4",
-    "link": "blog1.com",
+    "name": "blog #4",
+    "url": "blog1.com",
     "type": "blog",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "blog4": {
-    "title": "blog #5",
-    "link": "blog1.com",
+    "name": "blog #5",
+    "url": "blog1.com",
     "type": "blog",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     }
   },
   "resources":
     {
     "resource0": {
-    "title": "resource #1",
-    "link": "resource1.com",
+    "name": "resource #1",
+    "url": "resource1.com",
     "type": "resource",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "resource1": {
-    "title": "resource #2",
-    "link": "resource2.com",
+    "name": "resource #2",
+    "url": "resource2.com",
     "type": "resource",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "resource2": {
-    "title": "resource #3",
-    "link": "resource3.com",
+    "name": "resource #3",
+    "url": "resource3.com",
     "type": "resource",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "resource3": {
-    "title": "resource #4",
-    "link": "resource4.com",
+    "name": "resource #4",
+    "url": "resource4.com",
     "type": "resource",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "resource4": {
-    "title": "resource #5",
-    "link": "resource5.com",
+    "name": "resource #5",
+    "url": "resource5.com",
     "type": "resource",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     }
   },
   "podcasts":
     {
     "podcast0": {
-    "title": "podcast #1",
-    "link": "podcast1.com",
+    "name": "podcast #1",
+    "url": "podcast1.com",
     "type": "podcast",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "podcast1": {
-    "title": "podcast #2",
-    "link": "podcast2.com",
+    "name": "podcast #2",
+    "url": "podcast2.com",
     "type": "podcast",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "podcast2": {
-    "title": "podcast #3",
-    "link": "podcast3.com",
+    "name": "podcast #3",
+    "url": "podcast3.com",
     "type": "podcast",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "podcast3": {
-    "title": "podcast #4",
-    "link": "podcast4.com",
+    "name": "podcast #4",
+    "url": "podcast4.com",
     "type": "podcast",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     },
     "podcast4": {
-    "title": "podcast #5",
-    "link": "podcast5.com",
+    "name": "podcast #5",
+    "url": "podcast5.com",
     "type": "podcast",
-    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2"
+    "uid": "xEiswhxwJNahQQnfnTNEH5XWgkA2",
+    "id": ""
     }
   }
 }

@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
 
 const listingShape = PropTypes.shape({
-  title: PropTypes.string.isRequired,
-  link: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired,
   uid: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
 });
 
 

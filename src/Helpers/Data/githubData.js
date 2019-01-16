@@ -1,34 +1,35 @@
-// import axios from 'axios';
+import axios from 'axios';
+import apiKeys from '../apiKeys';
 
+const clientId = apiKeys.githubApi.client_id;
+const clientSecret = apiKeys.githubApi.client_secret;
 
-// const getUser = token => new Promise((resolve, reject) => {
-//   axios.get('https://api.github.com/user', { headers: { Authorization: `token ${token}` } })
-//     .then((res) => {
-//       const profile = res.data;
-//       console.log(profile);
-//       resolve(profile);
-//     })
-//     .catch((err) => {
-//       reject(err);
-//     });
-// });
+const getGithubProfile = githubUsername => new Promise((resolve, reject) => {
+  axios.get(`https://api.github.com/users/${githubUsername}?client_id=${clientId}&client_secret=${clientSecret}`)
+    .then((result) => {
+      resolve(result.data);
+    })
+    .catch((error) => {
+      reject(error);
+    });
+});
 
-// const getUserEvents = (userName, token) => new Promise((resolve, reject) => {
-//   axios.get(`https://api.github.com/users/${userName}/events/public`, { headers: { Authorization: `token ${token}` } })
-//     .then((res) => {
-//       let commitCount = 0;
-//       const pushEvents = res.data.filter(event => event.type === 'PushEvent');
-//       pushEvents.forEach((pushEvent) => {
-//         commitCount += pushEvent.payload.commits.length;
-//       });
-//       resolve(commitCount);
-//     })
-//     .catch((err) => {
-//       reject(err);
-//     });
-// });
+const getGithubCommits = githubUsername => new Promise((resolve, reject) => {
+  axios.get(`https://api.github.com/users/${githubUsername}/events/public`)
+    .then((result) => {
+      let numberOfCommits = 0;
+      const filteredEvents = result.data.filter(event => event.type === 'PushEvent');
+      filteredEvents.forEach((event) => {
+        numberOfCommits += event.payload.commits.length;
+      });
+      resolve(numberOfCommits);
+    })
+    .catch((error) => {
+      reject(error);
+    });
+});
 
-// export default {
-//   getUser,
-//   getUserEvents,
-// };
+export default {
+  getGithubProfile,
+  getGithubCommits,
+};

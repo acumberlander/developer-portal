@@ -1,0 +1,5 @@
+@import '../../Styles/variables';
+
+.podcast-item {
+  @include tabItem;
+}

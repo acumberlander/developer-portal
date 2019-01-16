@@ -1,28 +1,32 @@
-// import React, { Component } from 'react';
-// import './profile.scss';
+import React from 'react';
+import './Profile.scss';
+import PropTypes from 'prop-types';
 
-// class Profile extends Component {
-//   render() {
-//     const { profile, commitCount } = this.props;
-//     return (
-//       <div className="profile col">
-//         <div className="profileWrap">
-//         <h2>Profile</h2>
-//         <div className="card">
-//           <img className="img-fluid" src={profile.avatar_url} alt="github pic"></img>
-//           <p className="card-text">{profile.bio}</p>
-//           <h2 className="card-title">{profile.login}</h2>
-//           <a href={profile.html_url} className="_blank">https://github.com/{profile.login}</a>
-//           <br/>
-//           <br/>
-//           <h6>Commits</h6>
-//           <p>in the last 5 days</p>
-//           <h4>{commitCount}</h4>
-//         </div>
-//         </div>
-//       </div>
-//     );
-//   }
-// }
+class Profile extends React.Component {
+  static propType = {
+    githubCommits: PropTypes.string,
+    githubProfileLink: PropTypes.string,
+    githubProfilePic: PropTypes.string,
+    githubUsername: PropTypes.string,
+  }
 
-// export default Profile;
+  render() {
+    const {
+      githubCommits,
+      githubProfileLink,
+      githubProfilePic,
+      githubUsername,
+    } = this.props;
+    return (
+      <div className="profile p-4">
+        <img className="profileImage mb-2" src={githubProfilePic} alt="github profile pic"/>
+        <h3 className="mb-2">{githubUsername}</h3>
+        <a href={githubProfileLink}>Github Profile Link</a>
+        <h3 className="mt-2">{githubCommits} Commits</h3>
+        <h5>in the last 5 days</h5>
+      </div>
+    );
+  }
+}
+
+export default Profile;

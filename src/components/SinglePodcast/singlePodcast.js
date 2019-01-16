@@ -1,80 +1,63 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Form,
   FormGroup,
   Label,
   Input,
 } from 'reactstrap';
+import tabDataShape from '../../Helpers/Data/propz/listingShape';
+import './SinglePodcast.scss';
 
-import listingShape from '../../Helpers/Data/propz/listingShape';
-import authRequests from '../../Helpers/Data/authRequests';
-import './singlePodcast.scss';
-
-class SinglePodcast extends React.Component {
+class PodcastItem extends React.Component {
   static propTypes = {
-    podcast: listingShape,
-    deleteSingleListing: PropTypes.func,
-    passPodcastToEdit: PropTypes.func,
+    podcast: tabDataShape,
+    deleteTabItem: PropTypes.func,
+    passTabItemToEdit: PropTypes.func,
+    updateSingleIsCompleted: PropTypes.func,
   }
 
   deleteEvent = (e) => {
     e.preventDefault();
-    const { deleteSingleListing, podcast } = this.props;
-    deleteSingleListing(podcast.id);
+    const { deleteTabItem, podcast } = this.props;
+    deleteTabItem(podcast.id, 'podcasts');
   }
 
   editEvent = (e) => {
     e.preventDefault();
-    const { passPodcastToEdit, podcast } = this.props;
-    passPodcastToEdit(podcast.id);
+    const { passTabItemToEdit, podcast } = this.props;
+    passTabItemToEdit(podcast.id, 'podcasts');
   }
+
+  updateIsCompleted = (e) => {
+    const { podcast, updateSingleIsCompleted } = this.props;
+    const isCompleted = e.target.checked;
+    updateSingleIsCompleted(podcast.id, isCompleted, 'podcasts');
+  }
+
 
   render() {
     const { podcast } = this.props;
-    const uid = authRequests.getCurrentUid();
-
-    const makeButtons = () => {
-      if (podcast.uid === uid) {
-        console.log(podcast.uid);
-        console.log(uid);
-        return (
-          <div>
-            <span className="col">
-              <button className="btn btn-default" onClick={this.editEvent}>
-                <i className="fas fa-pencil-alt"></i>
-              </button>
-            </span>
-            <span className="col">
-              <button className="btn btn-default" onClick={this.deleteEvent}>
-                <i className="fas fa-trash-alt"></i>
-              </button>
-            </span>
-          </div>
-        );
-      }
-      return <span className="col-2"></span>;
-    };
     return (
-      <li className="single-podcast text-center">
-        <span className="col-4">{podcast.title}</span>
-        <span className="col-3">{podcast.link}</span>
-        {makeButtons()}
+      <div className="podcast-item row">
+        <span className="col-4">{podcast.name}</span>
+        <span className="col-4"><a href={podcast.url}>Link</a></span>
         <span className="col-1">
-          <Form>
-            <FormGroup check inline>
-              <Label check>
-                <Input type="checkbox" id="podcastStatus"/>
-              </Label>
-            </FormGroup>
-          </Form>
+          <button className="btn btn-dark" onClick={this.editEvent}><i className="far fa-edit"/></button>
         </span>
-        <span>
-        "Done!"
+        <span className="col-1">
+          <button className="btn btn-dark" onClick={this.deleteEvent}><i className="far fa-trash-alt"/></button>
         </span>
-      </li>
+        <span className="col-2">
+        <FormGroup check>
+                <Label check>
+                  <Input type="checkbox" checked={podcast.isCompleted} onChange={this.updateIsCompleted}/>{' '}
+                Done
+                </Label>
+          </FormGroup>
+        </span>
+      </div>
     );
   }
 }
 
-export default SinglePodcast;
+export default PodcastItem;

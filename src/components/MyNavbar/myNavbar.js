@@ -1,5 +1,5 @@
 import React from 'react';
-import './myNavbar.scss';
+import './MyNavbar.scss';
 import {
   Collapse,
   Navbar,
