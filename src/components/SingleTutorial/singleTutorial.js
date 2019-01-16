@@ -1,78 +1,62 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Form,
   FormGroup,
   Label,
   Input,
 } from 'reactstrap';
+import tabDataShape from '../../Helpers/Data/propz/listingShape';
+import './SingleTutorial.scss';
 
-import listingShape from '../../Helpers/Data/propz/listingShape';
-import authRequests from '../../Helpers/Data/authRequests';
-import './singleTutorial.scss';
-
-class SingleTutorial extends React.Component {
+class TutorialItem extends React.Component {
   static propTypes = {
-    tutorial: listingShape,
-    deleteSingleListing: PropTypes.func,
-    passTutorialToEdit: PropTypes.func,
+    tutorial: tabDataShape,
+    deleteTabItem: PropTypes.func,
+    passTabItemToEdit: PropTypes.func,
+    updateSingleIsCompleted: PropTypes.func,
   }
 
   deleteEvent = (e) => {
     e.preventDefault();
-    const { deleteSingleListing, tutorial } = this.props;
-    deleteSingleListing(tutorial.id);
+    const { deleteTabItem, tutorial } = this.props;
+    deleteTabItem(tutorial.id, 'tutorials');
   }
 
   editEvent = (e) => {
     e.preventDefault();
-    const { passTutorialToEdit, tutorial } = this.props;
-    passTutorialToEdit(tutorial.id);
+    const { passTabItemToEdit, tutorial } = this.props;
+    passTabItemToEdit(tutorial.id, 'tutorials');
+  }
+
+  updateIsCompleted = (e) => {
+    const { tutorial, updateSingleIsCompleted } = this.props;
+    const isCompleted = e.target.checked;
+    updateSingleIsCompleted(tutorial.id, isCompleted, 'tutorials');
   }
 
   render() {
     const { tutorial } = this.props;
-    const uid = authRequests.getCurrentUid();
-
-    const makeButtons = () => {
-      if (tutorial.uid === uid) {
-        return (
-          <div>
-            <span className="col">
-              <button className="btn btn-default" onClick={this.editEvent}>
-                <i className="fas fa-pencil-alt"></i>
-              </button>
-            </span>
-            <span className="col">
-              <button className="btn btn-default" onClick={this.deleteEvent}>
-                <i className="fas fa-trash-alt"></i>
-              </button>
-            </span>
-          </div>
-        );
-      }
-      return <span className="col-2"></span>;
-    };
     return (
-      <li className="single-tutorial text-center">
-        <span className="col-4">{tutorial.title}</span>
-        <span className="col-3">{tutorial.link}</span>
-        {makeButtons()}
+      <div className="tutorial-item row">
+        <span className="col-4">{tutorial.name}</span>
+        <span className="col-4"><a href={tutorial.url}>Link</a></span>
         <span className="col-1">
-          <Form>
-            <FormGroup check inline>
-              <Label check>
-                <Input type="checkbox" id="tutorialStatus"/>
-              </Label>
-            </FormGroup>
-          </Form>
+          <button className="btn btn-dark" onClick={this.editEvent}><i className="far fa-edit"/></button>
         </span>
-        <span>
-        "Done!"
+        <span className="col-1">
+          <button className="btn btn-dark" onClick={this.deleteEvent}><i className="far fa-trash-alt"/></button>
         </span>
-      </li>
+        <span className="col-2">
+        <FormGroup check>
+                <Label check>
+                  <Input type="checkbox" checked={tutorial.isCompleted} onChange={this.updateIsCompleted}/>{' '}
+                Done
+                </Label>
+          </FormGroup>
+        </span>
+      </div>
     );
   }
 }
 
-export default SingleTutorial;
+export default TutorialItem;

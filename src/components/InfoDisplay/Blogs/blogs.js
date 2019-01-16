@@ -1,29 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import listingShape from '../../../Helpers/Data/propz/listingShape';
-import SingleBlog from '../../SingleBlog/singleBlog';
-import './blogs.scss';
+import SingleBlog from '../../SingleBlog/SingleBlog';
+import './Blogs.scss';
 
 class Blogs extends React.Component {
   // this defines what type these property values should be
-  static propTypes = {
+  static propType = {
     blogs: PropTypes.arrayOf(listingShape),
-    deleteSingleListing: PropTypes.func,
+    deleteTabItem: PropTypes.func,
+    passTabItemToEdit: PropTypes.func,
+    updateSingleIsCompleted: PropTypes.func,
   }
 
   render() {
-    const { blogs, deleteSingleListing } = this.props;
-    const blogItemComponents = blogs.map(blog => (
+    const {
+      blogs,
+      deleteTabItem,
+      passTabItemToEdit,
+      updateSingleIsCompleted,
+    } = this.props;
+    const blogsItemComponents = blogs.map(blog => (
       <SingleBlog
-        tutorial={blog}
+        blog={blog}
         key={blog.id}
-        deleteSingleListing={deleteSingleListing}
-        />
+        deleteTabItem={deleteTabItem}
+        passTabItemToEdit={passTabItemToEdit}
+        updateSingleIsCompleted={updateSingleIsCompleted}
+      />
     ));
     return (
-      <div className="display-items col">
-        <h2>Blogs</h2>
-        <ul>{blogItemComponents}</ul>
+      <div className="blogs mt-4">
+        <ul>{blogsItemComponents}</ul>
       </div>
     );
   }

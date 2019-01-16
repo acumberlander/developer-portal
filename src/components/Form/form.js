@@ -1,131 +1,176 @@
 import React from 'react';
+import './Form.scss';
 import PropTypes from 'prop-types';
+import {
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+} from 'reactstrap';
 import authRequests from '../../Helpers/Data/authRequests';
-import './form.scss';
+import tabDataRequests from '../../Helpers/Data/tabDataRequests';
 
-const defaultListing = {
+const defaultTabItem = {
   name: '',
   url: '',
   uid: '',
+  isCompleted: false,
 };
 
-
-class Form extends React.Component {
+class TabForm extends React.Component {
   static propTypes = {
     onSubmit: PropTypes.func,
     isEditing: PropTypes.bool,
     editId: PropTypes.string,
+    tabType: PropTypes.string,
   }
 
   state = {
-    newListing: defaultListing,
-    selectedOption: 'tutorial',
+    newTabItem: defaultTabItem,
+    tabType: false,
   }
 
   formFieldStringState = (name, e) => {
     e.preventDefault();
-    const tempListing = { ...this.state.newListing };
-    tempListing[name] = e.target.value;
-    this.setState({ newListing: tempListing });
+    const tempTabItem = { ...this.state.newTabItem };
+    tempTabItem[name] = e.target.value;
+    this.setState({ newTabItem: tempTabItem });
   }
 
-  handleOptionChange = (changeEvent) => {
-    this.setState({
-      selectedOption: changeEvent.target.value,
-    });
-  }
+  setTabTypeState = (e) => {
+    const newTabType = e.target.value;
+    this.setState({ tabType: newTabType });
+  };
 
-  descriptionChange = e => this.formFieldStringState('name', e);
+  tabTypeChange = e => this.setTabTypeState(e)
 
-  urlChange = e => this.formFieldStringState('url', e);
+  nameChange = e => this.formFieldStringState('name', e)
+
+  linkChange = e => this.formFieldStringState('url', e)
 
   formSubmit = (e) => {
     e.preventDefault();
-    const { onSubmit } = this.props;
-    const myForm = { ...this.state.newListing };
-    const myBullet = this.state.selectedOption;
-    myForm.uid = authRequests.getCurrentUid();
-    onSubmit(myForm, myBullet);
-    this.setState({ newListing: defaultListing });
+    const { onSubmit, isEditing } = this.props;
+    if (isEditing) {
+      const { tabType } = this.props;
+      const myTabItem = { ...this.state.newTabItem };
+      myTabItem.uid = authRequests.getCurrentUid();
+      onSubmit(myTabItem, tabType);
+      this.setState({ newTabItem: defaultTabItem, tabType: false });
+    } else {
+      const { tabType } = this.state;
+      const myTabItem = { ...this.state.newTabItem };
+      myTabItem.uid = authRequests.getCurrentUid();
+      onSubmit(myTabItem, tabType);
+      this.setState({ newTabItem: defaultTabItem, tabType: false });
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { isEditing, editId, tabType } = this.props;
+    if (prevProps !== this.props && isEditing) {
+      tabDataRequests.getSingleTabItem(editId, tabType)
+        .then((tabItem) => {
+          this.setState({ newTabItem: tabItem.data });
+        })
+        .catch((error) => {
+          console.error('error on componentDidUpdate', error);
+        });
+    }
   }
 
   render() {
-    const { newListing } = this.state;
+    const { newTabItem, tabType } = this.state;
     return (
-      <div className="form">
-      <h2>Add Resources</h2>
-        <form onSubmit={this.formSubmit}>
-        <div className="formWrapper">
-          <div className="form-group">
-          <div>
-            <label htmlFor="exampleInputEmail1"></label>
-            <input
-              type="text"
-              className="form-description"
-              id="description"
-              aria-describedby="emailHelp"
-              placeholder="Enter Disctiption"
-              value={newListing.address}
-              onChange={this.descriptionChange}
-            />
-            </div>
-            <div>
-            <label className="" htmlFor="exampleInputEmail1"></label>
-            <input
-              type="text"
-              className="form-url"
-              id="url"
-              aria-describedby="emailHelp"
-              placeholder="Link"
-              value={newListing.url}
-              onChange={this.urlChange}
-            />
-            </div>
+      <div className="form p-4">
+      <Form onSubmit={this.formSubmit}>
+      <div className="row">
+      <div className="col-8">
+        <FormGroup>
+          <div className="d-flex flex-nowrap">
+          <Label className="name-label" for="name">Name:</Label>
+          <Input
+            type="text"
+            name="form-name"
+            id="name"
+            placeholder="add name"
+            value={newTabItem.name}
+            onChange= {this.nameChange}
+          />
           </div>
-          <div className="radio">
-      <label>
-        <input type="radio" value="tutorials"
-          checked={this.state.selectedOption === 'tutorials'}
-          onChange={this.handleOptionChange}
-        />
-        Tutorials
-      </label>
-    </div>
-    <div className="radio">
-      <label>
-        <input type="radio" value="blog"
-          checked={this.state.selectedOption === 'blog'}
-          onChange={this.handleOptionChange}
-        />
-        Blogs
-      </label>
-    </div>
-    <div className="radio">
-      <label>
-        <input type="radio" value="resource"
-          checked={this.state.selectedOption === 'resource'}
-          onChange={this.handleOptionChange}
-        />
-        Resources
-      </label>
-    </div>
-    <div className="radio">
-      <label>
-        <input type="radio" value="podcast"
-          checked={this.state.selectedOption === 'podcast'}
-          onChange={this.handleOptionChange}
-        />
-        Podcast
-      </label>
-    </div>
-        <div>
-          <button className="addButton btn btn-danger ml-4" type="submit">Save</button>
+        </FormGroup>
+        <FormGroup>
+          <div className="d-flex flex-nowrap">
+          <Label className="link-label" for="link">Link:</Label>
+          <Input
+            type="text"
+            name="form-link"
+            id="link"
+            placeholder="add url link"
+            value={newTabItem.url}
+            onChange= {this.linkChange}
+          />
+          </div>
+        </FormGroup>
+        </div>
+        <div className="col-2">
+        <FormGroup tag="fieldset">
+          <FormGroup check>
+            <Label check>
+              <Input
+                type="radio"
+                name="form-radio"
+                checked={ tabType === 'tutorials' }
+                value="tutorials"
+                onChange={ this.tabTypeChange }
+              />{' '}
+              Tutorial
+            </Label>
+          </FormGroup>
+          <FormGroup check>
+            <Label check>
+              <Input
+                type="radio"
+                name="form-radio"
+                value="resources"
+                onClick={ this.tabTypeChange }
+              />{' '}
+              Resource
+            </Label>
+          </FormGroup>
+          <FormGroup check>
+            <Label check>
+              <Input
+                type="radio"
+                name="form-radio"
+                value="blogs"
+                onClick={ this.tabTypeChange }
+              />{' '}
+              Blog
+            </Label>
+          </FormGroup>
+          <FormGroup check>
+            <Label check>
+              <Input
+                type="radio"
+                name="form-radio"
+                value="podcasts"
+                onClick={ this.tabTypeChange }
+              />{' '}
+              Podcast
+            </Label>
+          </FormGroup>
+        </FormGroup>
+        </div>
+        <div className="col-2">
+        <Button className="btn btn-dark">Save</Button>
         </div>
         </div>
-        </form>
+      </Form>
       </div>
     );
   }
 }
 
-export default Form;
+export default TabForm;

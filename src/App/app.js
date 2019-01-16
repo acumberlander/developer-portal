@@ -1,374 +1,263 @@
 import React, { Component } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import {
-  TabContent,
-  TabPane,
-  Nav,
-  NavItem,
-  NavLink,
-} from 'reactstrap';
-import classnames from 'classnames';
-
-import connection from '../Helpers/Data/connection';
-
-import Auth from '../components/Auth/auth';
-import Tutorials from '../components/InfoDisplay/Tutorials/tutorials';
-import Blogs from '../components/InfoDisplay/Blogs/blogs';
-import Podcasts from '../components/InfoDisplay/Podcasts/podcasts';
-import Resources from '../components/InfoDisplay/Resources/resources';
-import Form from '../components/Form/form';
-import MyNavbar from '../components/MyNavbar/myNavbar';
-import Profile from '../components/Profile/profile';
-import githubData from '../Helpers/Data/githubData';
-import tutorialRequests from '../Helpers/Data/TutorialsRequests/tutorialRequests';
-import blogRequests from '../Helpers/Data/BlogsRequests/blogsRequests';
-import podcastRequests from '../Helpers/Data/PodcastsRequests/podcastsRequests';
-import resourceRequests from '../Helpers/Data/ResourcesRequests/resourcesRequests';
-
-import './app.scss';
+import './App.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import Bio from '../components/Bio/bio';
+import Auth from '../components/Auth/Auth';
+import MyNavbar from '../components/MyNavbar/MyNavbar';
+import GithubProfile from '../components/Profile/Profile';
+import TabList from '../components/TabList/TabList';
+import connection from '../Helpers/Data/connection';
 import authRequests from '../Helpers/Data/authRequests';
-
+import githubApiRequests from '../Helpers/Data/githubData';
+import tabDataRequests from '../Helpers/Data/tabDataRequests';
+import TabForm from '../components/Form/Form';
 
 class App extends Component {
   state = {
     authed: false,
-    github_username: '',
-    githubToken: '',
-    commitCount: 0,
+    githubUsername: '',
     tutorials: [],
-    blogs: [],
-    resources: [],
     podcasts: [],
-    profile: [],
-  }
-
-  constructor(props) {
-    super(props);
-    this.toggle = this.toggle.bind(this);
-    this.state = {
-      activeTab: '1',
-    };
-  }
-
-  toggle(tab) {
-    if (this.state.activeTab !== tab) {
-      this.setState({
-        activeTab: tab,
-      });
-    }
-  }
-
-  getGitHubData = (users, gitHubTokenStorage) => {
-    githubData.getUser(gitHubTokenStorage)
-      .then((profile) => {
-        this.setState({ profile });
-      });
-    githubData.getUserEvent(users, gitHubTokenStorage)
-      .then((commitCount) => {
-        this.setState({ commitCount });
-      })
-      .catch(err => console.error('error with github user events GET', err));
-  }
-  // ----------------------------------COMPONENT DATA REQUESTS------------------------------//
+    resources: [],
+    blogs: [],
+    isEditing: false,
+    editId: '-1',
+    tabType: '',
+    githubProfileLink: '',
+    githubProfilePic: '',
+    githubCommits: 0,
+  };
 
   componentDidMount() {
     connection();
     this.removeListener = firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        const users = sessionStorage.getItem('githubUsername');
-        const gitHubTokenStorage = sessionStorage.getItem('githubToken');
-        this.getGitHubData(users, gitHubTokenStorage);
+        this.setState({
+          authed: true,
+        });
+        const githubUser = this.state.githubUsername;
+        githubApiRequests.getGithubProfile(githubUser)
+          .then((githubData) => {
+            const githubProfileLink = githubData.html_url;
+            const githubCommits = githubData.x;
+            const githubProfilePic = githubData.avatar_url;
+            this.setState({ githubProfileLink, githubCommits, githubProfilePic });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+
+        githubApiRequests.getGithubCommits(githubUser)
+          .then((githubCommits) => {
+            this.setState({ githubCommits });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+
+        const currentUser = authRequests.getCurrentUid();
+
+        tabDataRequests.getRequest(currentUser, 'tutorials')
+          .then((tutorials) => {
+            console.log(tutorials);
+            this.setState({ tutorials });
+          });
+
+        tabDataRequests.getRequest(currentUser, 'podcasts')
+          .then((podcasts) => {
+            this.setState({ podcasts });
+          });
+
+        tabDataRequests.getRequest(currentUser, 'blogs')
+          .then((blogs) => {
+            this.setState({ blogs });
+          });
+
+        tabDataRequests.getRequest(currentUser, 'resources')
+          .then((resources) => {
+            this.setState({ resources });
+          });
       } else {
         this.setState({
           authed: false,
         });
       }
     });
-
-    tutorialRequests.getTutorialsRequest()
-      .then((tutorials) => {
-        this.setState({ tutorials });
-      })
-      .catch(err => console.error('error with listing GET', err));
-
-    blogRequests.getBlogsRequest()
-      .then((blogs) => {
-        this.setState({ blogs });
-      })
-      .catch(err => console.error('error with listing GET', err));
-
-    podcastRequests.getPodcastsRequest()
-      .then((podcasts) => {
-        this.setState({ podcasts });
-      })
-      .catch(err => console.error('error with listing GET', err));
-
-    resourceRequests.getResourcesRequest()
-      .then((resources) => {
-        this.setState({ resources });
-      })
-      .catch(err => console.error('error with listing GET', err));
   }
 
   componentWillUnmount() {
     this.removeListener();
   }
 
-  isAuthenticated = (user, accessToken) => {
+  isAuthenticated = (username) => {
     this.setState({
       authed: true,
-      github_username: user,
-      githubToken: accessToken,
+      githubUsername: username,
     });
-    sessionStorage.setItem('github_username', user);
-    sessionStorage.setItem('githubtoken', accessToken);
   }
 
-  // --------------------------------------------- DELETE FUNCTIONS ------------------------------//
-
-  deleteOneTutorial = (tutorialId) => {
-    tutorialRequests.deleteTutorial(tutorialId)
+  deleteTabItem = (tabId, tabType) => {
+    const uid = authRequests.getCurrentUid();
+    tabDataRequests.deleteRequest(tabId, tabType)
       .then(() => {
-        tutorialRequests.getTutorialsRequest()
-          .then((tutorials) => {
-            this.setState({ tutorials });
+        tabDataRequests.getRequest(uid, tabType)
+          .then((tabItems) => {
+            if (tabType === 'tutorials') {
+              this.setState({ tutorials: tabItems });
+            } else if (tabType === 'podcasts') {
+              this.setState({ podcasts: tabItems });
+            } else if (tabType === 'blogs') {
+              this.setState({ blogs: tabItems });
+            } else if (tabType === 'resources') {
+              this.setState({ resources: tabItems });
+            }
           });
       })
-      .catch(err => console.error('error with delete single', err));
+      .catch((error) => {
+        console.error('error on formSubmitEvent', error);
+      });
   }
 
-  deleteOneBlog = (blogId) => {
-    blogRequests.deleteblog(blogId)
-      .then(() => {
-        blogRequests.getBlogsRequest()
-          .then((blogs) => {
-            this.setState({ blogs });
-          });
-      })
-      .catch(err => console.error('error with delete single', err));
-  }
-
-  deleteOnePodcast = (podcastId) => {
-    podcastRequests.deletePodcast(podcastId)
-      .then(() => {
-        podcastRequests.getPodcastsRequest()
-          .then((podcasts) => {
-            this.setState({ podcasts });
-          });
-      })
-      .catch(err => console.error('error with delete single', err));
-  }
-
-  deleteOneResource = (resourceId) => {
-    resourceRequests.deleteResource(resourceId)
-      .then(() => {
-        resourceRequests.getresourcesRequest()
-          .then((resources) => {
-            this.setState({ resources });
-          });
-      })
-      .catch(err => console.error('error with delete single', err));
-  }
-
-  // ----------------------------------- FORM SUBMIT FUNCTIONS -------------------------------//
-
-
-  formSubmitEvent = (newListing, tab) => {
-    if (tab === 'tutorials') {
-      tutorialRequests.postTutorialRequest(newListing)
+  formSubmitEvent = (newTabItem, tabType) => {
+    const uid = authRequests.getCurrentUid();
+    const { isEditing, editId } = this.state;
+    if (isEditing && tabType !== '') {
+      tabDataRequests.putRequest(editId, tabType, newTabItem)
         .then(() => {
-          tutorialRequests.getTutorialsRequest()
-            .then((tutorials) => {
-              this.setState({ tutorials });
+          tabDataRequests.getRequest(uid, tabType)
+            .then((tabItems) => {
+              if (tabType === 'tutorials') {
+                this.setState({ tutorials: tabItems });
+              } else if (tabType === 'podcasts') {
+                this.setState({ podcasts: tabItems });
+              } else if (tabType === 'blogs') {
+                this.setState({ blogs: tabItems });
+              } else if (tabType === 'resources') {
+                this.setState({ resources: tabItems });
+              }
+            });
+          this.setState({ isEditing: false, editId: -1 });
+        })
+        .catch((error) => {
+          console.error('error on formSubmitEvent', error);
+        });
+    } else if (tabType !== '') {
+      tabDataRequests.postRequest(newTabItem, tabType)
+        .then(() => {
+          tabDataRequests.getRequest(uid, tabType)
+            .then((tabItems) => {
+              if (tabType === 'tutorials') {
+                this.setState({ tutorials: tabItems });
+              } else if (tabType === 'podcasts') {
+                this.setState({ podcasts: tabItems });
+              } else if (tabType === 'blogs') {
+                this.setState({ blogs: tabItems });
+              } else if (tabType === 'resources') {
+                this.setState({ resources: tabItems });
+              }
             });
         })
-        .catch(err => console.error('error with tutorials post', err));
-    } else if (tab === 'blogs') {
-      blogRequests.postBlogRequest(newListing)
-        .then(() => {
-          blogRequests.getTutorialRequest()
-            .then((blogs) => {
-              this.setState({ blogs });
-            });
-        })
-        .catch(err => console.error('error with blogs post', err));
-    } else if (tab === 'podcasts') {
-      podcastRequests.postPodcastRequest(newListing)
-        .then(() => {
-          podcastRequests.getPodcastsRequest()
-            .then((podcasts) => {
-              this.setState({ podcasts });
-            });
-        })
-        .catch(err => console.error('error with podcast post', err));
-    } else if (tab === 'resources') {
-      resourceRequests.postResourceRequest(newListing)
-        .then(() => {
-          resourceRequests.getResourceRequest()
-            .then((resources) => {
-              this.setState({ resources });
-            });
-        })
-        .catch(err => console.error('error with podcast post', err));
+        .catch((error) => {
+          console.error('error on formSubmitEvent', error);
+        });
+    } else {
+      alert('no tab type has been selected');
     }
-  };
+  }
 
+  passTabItemToEdit = (tabId, tabType) => {
+    this.setState({ isEditing: true, editId: tabId, tabType });
+  }
 
-  // resourceFormSubmitEvent = (newResource) => {
-  //   const { isEditing, editId } = this.state;
-  //   if (isEditing) {
-  //     resourceRequests.putResourceRequest(editId, newResource)
-  //       .then(() => {
-  //         resourceRequests.getResourcesRequest()
-  //           .then((resources) => {
-  //             this.setState({ resources, isEditing: false, editId: '-1' });
-  //           });
-  //       })
-  //       .catch(err => console.error('error with resources post', err));
-  //   } else {
-  //     resourceRequests.postResourceRequest(newResource)
-  //       .then(() => {
-  //         resourceRequests.getResourcesRequest()
-  //           .then((resources) => {
-  //             this.setState({ resources });
-  //           });
-  //       })
-  //       .catch(err => console.error('error with resources post', err));
-  //   }
-  // };
-
-  // ------------------------------- PASS TO EDIT FUNCTIONS -------------------------------//
-
-  passTutorialToEdit = tutorialId => this.setState({ isEditing: true, editId: tutorialId });
-
-  passBlogToEdit = blogId => this.setState({ isEditing: true, editId: blogId });
-
-  passPodcastToEdit = podcastId => this.setState({ isEditing: true, editId: podcastId });
-
-  passResourceToEdit = resourceId => this.setState({ isEditing: true, editId: resourceId });
-
-  // ---------------------------------- RENDER FUNCTION ----------------------//
+  updateSingleIsCompleted= (itemId, isCompleted, tabType) => {
+    const uid = authRequests.getCurrentUid();
+    tabDataRequests.updateItemIsCompleted(itemId, isCompleted, tabType)
+      .then(() => {
+        tabDataRequests.getRequest(uid, tabType)
+          .then((tabItems) => {
+            if (tabType === 'tutorials') {
+              tabItems.sort((x, y) => x.isCompleted - y.isCompleted);
+              this.setState({ tutorials: tabItems });
+            } else if (tabType === 'podcasts') {
+              tabItems.sort((x, y) => x.isCompleted - y.isCompleted);
+              this.setState({ podcasts: tabItems });
+            } else if (tabType === 'blogs') {
+              tabItems.sort((x, y) => x.isCompleted - y.isCompleted);
+              this.setState({ blogs: tabItems });
+            } else if (tabType === 'resources') {
+              tabItems.sort((x, y) => x.isCompleted - y.isCompleted);
+              this.setState({ resources: tabItems });
+            }
+          });
+      })
+      .catch((error) => {
+        console.error('error on updateSingleIsCompleted', error);
+      });
+  }
 
   render() {
     const {
       authed,
-      isEditing,
+      podcasts,
+      tutorials,
+      blogs,
+      resources,
       editId,
+      isEditing,
+      tabType,
+      githubCommits,
+      githubProfileLink,
+      githubProfilePic,
+      githubUsername,
     } = this.state;
 
     const logoutClickEvent = () => {
       authRequests.logoutUser();
-      sessionStorage.clear();
-      this.setState({
-        authed: false,
-        gitHubUsername: '',
-        githubToken: '',
-      });
+      this.setState({ authed: false, githubUsername: '' });
     };
 
     if (!authed) {
       return (
         <div className="App">
           <MyNavbar isAuthed={authed} logoutClickEvent={logoutClickEvent}/>
-          <div className="row">
-          <Auth isAuthenticated={this.isAuthenticated}/>
-          </div>
+          <Auth isAuthenticated={this.isAuthenticated} />
         </div>
       );
     }
-
     return (
-    <div className="App">
+      <div className="App">
       <MyNavbar isAuthed={authed} logoutClickEvent={logoutClickEvent}/>
-      <div className="wrapper">
-        <div className="profile">
-        { authed
-        && <Profile
-        profile={this.state.profile}
-        commitCount={this.state.commitCount}
-        /> }
-        </div>
-      <div className="form">
-        <Form
+      <div className="row mt-4">
+      <div className="col-4 ml-5">
+      <GithubProfile
+        githubCommits={githubCommits}
+        githubProfileLink={githubProfileLink}
+        githubProfilePic={githubProfilePic}
+        githubUsername={githubUsername}
+      />
+      </div>
+      <div className="col-7 ml-5">
+      <TabForm
         onSubmit={this.formSubmitEvent}
         isEditing={isEditing}
         editId={editId}
-        />
+        tabType={tabType}
+      />
+      <TabList
+        tutorials={tutorials}
+        podcasts={podcasts}
+        blogs={blogs}
+        resources={resources}
+        deleteTabItem={this.deleteTabItem}
+        passTabItemToEdit={this.passTabItemToEdit}
+        updateSingleIsCompleted={this.updateSingleIsCompleted}
+      />
       </div>
-      <div className="tab">
-        <Nav tabs>
-          <NavItem>
-            <NavLink className={classnames({ active: this.state.activeTab === '1' })}
-              onClick={() => {
-                this.toggle('1');
-              }}
-            >
-            Tutorial
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink className={classnames({ active: this.state.activeTab === '2' })}
-              onClick={() => {
-                this.toggle('2');
-              }}
-            >
-            Blogs
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink className={classnames({ active: this.state.activeTab === '3' })}
-              onClick={() => {
-                this.toggle('3');
-              }}
-            >
-            Podcasts
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink className={classnames({ active: this.state.activeTab === '4' })}
-              onClick={() => {
-                this.toggle('4');
-              }}
-            >
-            Resources
-            </NavLink>
-          </NavItem>
-        </Nav>
-        <TabContent activeTab={this.state.activeTab}>
-          <TabPane tabId="1">
-            <Tutorials
-              tutorials={this.state.tutorials}
-              deleteSingleTutorial={this.deleteOneTutorial}
-            />
-          </TabPane>
-          <TabPane tabId="2">
-            <Blogs
-              blogs={this.state.blogs}
-              deleteSingleBlog={this.deleteOneBlog}
-            />
-          </TabPane>
-          <TabPane tabId="3">
-            <Podcasts
-              podcasts={this.state.podcasts}
-              deleteSinglePodcast={this.deleteOnePodcast}
-            />
-          </TabPane>
-          <TabPane tabId="4">
-            <Resources
-              resources={this.state.resources}
-              deleteSingleResource={this.deleteSingleResource}
-            />
-          </TabPane>
-        </TabContent>
-        </div>
       </div>
     </div>
     );
   }
 }
-
 
 export default App;
